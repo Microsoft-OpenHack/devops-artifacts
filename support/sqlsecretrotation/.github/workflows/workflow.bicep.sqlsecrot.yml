@@ -19,7 +19,6 @@ defaults:
 jobs:
   deploy:
     name: "Deploy"
-    needs: preview
     runs-on: ubuntu-latest
 
     steps:
