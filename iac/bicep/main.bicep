@@ -65,6 +65,7 @@ module appService './appService.bicep' = {
     // userAssignedManagedIdentityPrincipalId: managedIdentity.outputs.userAssignedManagedIdentityPrincipalId
     containerRegistryAdminUsername: containerRegistry.outputs.containerRegistryAdminUsername
     containerRegistryAdminPassword: containerRegistry.outputs.containerRegistryAdminPassword
+    keyVaultName: keyVault.outputs.name
   }
   scope: resourceGroup(resourceGroupName)
   dependsOn: [
@@ -119,6 +120,18 @@ module containerGroup './containerGroup.bicep' = {
     appService
     apps
   ]
+}
+
+module keyVault './keyVault.bicep' = {
+  name: 'keyVaultDeployment'
+  params: {
+    resourcesPrefix: resourcesPrefixCalculated
+    containerRegistryAdminPassword: containerRegistry.outputs.containerRegistryAdminPassword
+    sqlServerAdminLogin: sqlServer.outputs.sqlServerAdminLogin
+    sqlServerAdminPassword: sqlServer.outputs.sqlServerAdminPassword
+    sqlServerId: sqlServer.outputs.sqlServerId
+  }
+  scope: resourceGroup(resourceGroupName)
 }
 
 output appServiceApiPoiHealthcheck string = '${appService.outputs.appServiceApiPoiHostname}/api/healthcheck/poi'

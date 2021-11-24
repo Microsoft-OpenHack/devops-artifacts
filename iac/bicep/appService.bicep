@@ -8,6 +8,7 @@ param containerRegistryLoginServer string
 param containerRegistryName string
 param containerRegistryAdminUsername string
 param containerRegistryAdminPassword string
+param keyVaultName string // for Key Vault integration
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -18,6 +19,11 @@ var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/ro
 
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = {
   name: containerRegistryName
+}
+
+// Prepared for Key Vault integration
+resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
+  name: keyVaultName
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/serverfarms?tabs=bicep
@@ -92,6 +98,10 @@ resource acrPullRoleAssignmentTripviewer 'Microsoft.Authorization/roleAssignment
 resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
   name: '${resourcesPrefix}poi'
   location: location
+  // for Key Vault integration:
+  // identity: {
+  //   type: 'SystemAssigned'
+  // }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -104,6 +114,7 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'SQL_PASSWORD'
           value: sqlServerAdminPassword
+          //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL-PASSWORD)' // for Key Vault integration
         }
         {
           name: 'SQL_SERVER'
@@ -128,6 +139,7 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
+          //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=DOCKER-REGISTRY-SERVER-PASSWORD)' // for Key Vault integration
         }
       ]
       alwaysOn: true
@@ -153,6 +165,7 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
         {
           name: 'SQL_PASSWORD'
           value: sqlServerAdminPassword
+          //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=SQL-PASSWORD)' // for Key Vault integration
         }
         {
           name: 'SQL_SERVER'
@@ -177,6 +190,7 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
         {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
+          //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=DOCKER-REGISTRY-SERVER-PASSWORD)' // for Key Vault integration
         }
       ]
       alwaysOn: true
@@ -184,6 +198,27 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
     httpsOnly: true
   }
 }
+
+// Prepared for Key Vault integration
+// resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
+//   name: 'add'
+//   parent: keyVault
+//   properties: {
+//     accessPolicies: [
+//       {
+//         tenantId: appServiceApiPoi.identity.tenantId
+//         objectId: appServiceApiPoi.identity.principalId
+//         permissions: {
+//           secrets: [
+//             'get'
+//             'list'
+//             'set'
+//           ]
+//         }
+//       }
+//     ]
+//   }
+// }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
 resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {

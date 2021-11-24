@@ -42,3 +42,4 @@ output sqlServerAdminPassword string = varfile.sqlServerAdminPassword
 output sqlServerFqdn string = sqlServer.properties.fullyQualifiedDomainName
 output sqlDatabaseName string = sqlDatabase.name
 output sqlServerName string = sqlServer.name
+output sqlServerId string = sqlServer.id
