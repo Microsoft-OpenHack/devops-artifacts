@@ -20,6 +20,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
     tenantId: subscription().tenantId
 
     accessPolicies: []
+    softDeleteRetentionInDays: 7
   }
 }
 
