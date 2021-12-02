@@ -134,6 +134,14 @@ module keyVault './keyVault.bicep' = {
   scope: resourceGroup(resourceGroupName)
 }
 
+module logAnalytics './logAnalytics.bicep' = {
+  name: 'logAnalyticsDeployment'
+  params: {
+    resourcesPrefix: resourcesPrefixCalculated
+  }
+  scope: resourceGroup(resourceGroupName)
+}
+
 output appServiceApiPoiHealthcheck string = '${appService.outputs.appServiceApiPoiHostname}/api/healthcheck/poi'
 output appServiceApiTripsHealthcheck string = '${appService.outputs.appServiceApiTripsHostname}/api/healthcheck/trips'
 output appServiceApiUserjavaHealthcheck string = '${appService.outputs.appServiceApiUserjavaHostname}/api/healthcheck/user-java'
