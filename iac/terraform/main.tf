@@ -380,7 +380,7 @@ resource "azurerm_key_vault_access_policy" "key_vault_access_policy_sp" {
 
 resource "azurerm_key_vault_secret" "key_vault_secret_sqlpassword" {
   name         = "SQL-PASSWORD"
-  value        = azurerm_container_registry.container_registry.admin_password
+  value        = local.mssql_server_administrator_login_password
   key_vault_id = azurerm_key_vault.key_vault.id
 
   # tags = {
