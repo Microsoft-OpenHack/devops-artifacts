@@ -74,6 +74,22 @@ resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
           value: 'https://${appServiceApiPoi.properties.defaultHostName}'
         }
         {
+          name: 'STAGING_USER_ROOT_URL'
+          value: 'https://${appServiceApiPoiStaging.properties.defaultHostName}'
+        }
+        {
+          name: 'STAGING_USER_JAVA_ROOT_URL'
+          value: 'https://${appServiceApiUserjavaStaging.properties.defaultHostName}'
+        }
+        {
+          name: 'STAGING_TRIPS_ROOT_URL'
+          value: 'https://${appServiceApiTripsStaging.properties.defaultHostName}'
+        }
+        {
+          name: 'STAGING_POI_ROOT_URL'
+          value: 'https://${appServiceApiPoiStaging.properties.defaultHostName}'
+        }
+        {
           name: 'DOCKER_REGISTRY_SERVER_URL'
           value: 'https://${containerRegistryLoginServer}'
         }
