@@ -13,6 +13,7 @@ unittest_results.xml
 .vscode
 talisman_report
 talisman
+*.toml
 
 # Local .terraform directories
 .terraform

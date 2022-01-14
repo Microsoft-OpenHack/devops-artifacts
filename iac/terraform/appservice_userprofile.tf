@@ -60,7 +60,7 @@ resource "azurerm_app_service" "app_service_api-userprofile" {
 #   key_vault_id = azurerm_key_vault.key_vault.id
 #   tenant_id    = azurerm_app_service.app_service_api-userprofile.identity[0].tenant_id
 #   object_id    = azurerm_app_service.app_service_api-userprofile.identity[0].principal_id
-
+#
 #   secret_permissions = [
 #     "Get"
 #   ]
@@ -127,7 +127,7 @@ resource "azurerm_app_service_slot" "app_service_api-userprofile_staging" {
 #   key_vault_id = azurerm_key_vault.key_vault.id
 #   tenant_id    = azurerm_app_service_slot.app_service_api-userprofile_staging.identity[0].tenant_id
 #   object_id    = azurerm_app_service_slot.app_service_api-userprofile_staging.identity[0].principal_id
-
+#
 #   secret_permissions = [
 #     "Get"
 #   ]
