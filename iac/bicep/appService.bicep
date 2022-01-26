@@ -75,7 +75,7 @@ resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'STAGING_USER_ROOT_URL'
-          value: 'https://${appServiceApiPoiStaging.properties.defaultHostName}'
+          value: 'https://${appServiceApiUserprofileStaging.properties.defaultHostName}'
         }
         {
           name: 'STAGING_USER_JAVA_ROOT_URL'
