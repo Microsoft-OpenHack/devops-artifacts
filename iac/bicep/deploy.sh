@@ -19,19 +19,19 @@ fi
 # Initialize parameters specified from command line
 while getopts ":l:u:r:" arg; do
     case "${arg}" in
-        l) # Process -l (LOCATION)
-            LOCATION="${OPTARG}"
+    l) # Process -l (LOCATION)
+        LOCATION="${OPTARG}"
         ;;
-        u) # Process -u (UNIQUER)
-            UNIQUER="${OPTARG}"
+    u) # Process -u (UNIQUER)
+        UNIQUER="${OPTARG}"
         ;;
-        r) # Process -r (RESOURCES_PREFIX)
-            RESOURCES_PREFIX="${OPTARG}"
+    r) # Process -r (RESOURCES_PREFIX)
+        RESOURCES_PREFIX="${OPTARG}"
         ;;
-        \?)
-            _error "Invalid options found: -${OPTARG}."
-            _error "${USAGE_HELP}" 2>&1
-            exit 1
+    \?)
+        _error "Invalid options found: -${OPTARG}."
+        _error "${USAGE_HELP}" 2>&1
+        exit 1
         ;;
     esac
 done
@@ -71,12 +71,12 @@ azure_logout() {
     az account clear
 }
 
-lint_bicep(){
+lint_bicep() {
     az bicep build --file main.bicep
     rm main.json
 }
 
-validate_bicep(){
+validate_bicep() {
     if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
         az deployment sub validate --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
     elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
@@ -86,7 +86,7 @@ validate_bicep(){
     fi
 }
 
-preview_bicep(){
+preview_bicep() {
     if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
         az deployment sub what-if --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters resourcesPrefix="${RESOURCES_PREFIX}"
     elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
@@ -96,7 +96,7 @@ preview_bicep(){
     fi
 }
 
-deploy_bicep(){
+deploy_bicep() {
     if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
         _deployment_output=$(az deployment sub create --name "${RESOURCES_PREFIX}-${BUILD_ID}" --template-file main.bicep --location "${LOCATION}" --parameters resourcesPrefix="${RESOURCES_PREFIX}")
     elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
@@ -104,13 +104,13 @@ deploy_bicep(){
     else
         _deployment_output=$(az deployment sub create --name "${BUILD_ID}" --template-file main.bicep --location "${LOCATION}")
     fi
-    
+
     echo "${_deployment_output}"
 }
 
-test_deploy(){
+test_deploy() {
     local _hostnames="${1}"
-    
+
     sleep 30
     pwsh -Command ./smokeTest.ps1 -HostNames "${_hostnames}"
 }

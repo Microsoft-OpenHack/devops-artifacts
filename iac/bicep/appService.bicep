@@ -114,10 +114,9 @@ resource acrPullRoleAssignmentTripviewer 'Microsoft.Authorization/roleAssignment
 resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
   name: '${resourcesPrefix}poi'
   location: location
-  // for Key Vault integration:
-  // identity: {
-  //   type: 'SystemAssigned'
-  // }
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -164,10 +163,34 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+// Prepared for Key Vault integration
+// resource keyVaultAccessPolicyApiPoi 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
+//   name: 'add'
+//   parent: keyVault
+//   properties: {
+//     accessPolicies: [
+//       {
+//         tenantId: appServiceApiPoi.identity.tenantId
+//         objectId: appServiceApiPoi.identity.principalId
+//         permissions: {
+//           secrets: [
+//             'get'
+//             'list'
+//             'set'
+//           ]
+//         }
+//       }
+//     ]
+//   }
+// }
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/slots?tabs=bicep
 resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   parent: appServiceApiPoi
   name: 'staging'
+  identity: {
+    type: 'SystemAssigned'
+  }
   location: location
   properties: {
     serverFarmId: appServicePlan.id
@@ -216,14 +239,14 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
 }
 
 // Prepared for Key Vault integration
-// resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
+// resource keyVaultAccessPolicyApiPoiStaging 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
 //   name: 'add'
 //   parent: keyVault
 //   properties: {
 //     accessPolicies: [
 //       {
-//         tenantId: appServiceApiPoi.identity.tenantId
-//         objectId: appServiceApiPoi.identity.principalId
+//         tenantId: appServiceApiPoiStaging.identity.tenantId
+//         objectId: appServiceApiPoiStaging.identity.principalId
 //         permissions: {
 //           secrets: [
 //             'get'
@@ -240,6 +263,9 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
 resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
   name: '${resourcesPrefix}trips'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -284,6 +310,9 @@ resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
 resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   parent: appServiceApiTrips
   name: 'staging'
+  identity: {
+    type: 'SystemAssigned'
+  }
   location: location
   properties: {
     serverFarmId: appServicePlan.id
@@ -329,6 +358,9 @@ resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
 resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
   name: '${resourcesPrefix}userjava'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -373,6 +405,9 @@ resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
 resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   parent: appServiceApiUserjava
   name: 'staging'
+  identity: {
+    type: 'SystemAssigned'
+  }
   location: location
   properties: {
     serverFarmId: appServicePlan.id
@@ -418,6 +453,9 @@ resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
 resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
   name: '${resourcesPrefix}userprofile'
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
@@ -462,6 +500,9 @@ resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
 resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   parent: appServiceApiUserprofile
   name: 'staging'
+  identity: {
+    type: 'SystemAssigned'
+  }
   location: location
   properties: {
     serverFarmId: appServicePlan.id

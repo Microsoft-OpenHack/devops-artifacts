@@ -17,19 +17,19 @@ fi
 # Initialize parameters specified from command line
 while getopts ":l:u:r:" arg; do
     case "${arg}" in
-        l) # Process -l (LOCATION)
-            LOCATION="${OPTARG}"
+    l) # Process -l (LOCATION)
+        LOCATION="${OPTARG}"
         ;;
-        u) # Process -u (UNIQUER)
-            UNIQUER="${OPTARG}"
+    u) # Process -u (UNIQUER)
+        UNIQUER="${OPTARG}"
         ;;
-        r) # Process -r (RESOURCES_PREFIX)
-            RESOURCES_PREFIX="${OPTARG}"
+    r) # Process -r (RESOURCES_PREFIX)
+        RESOURCES_PREFIX="${OPTARG}"
         ;;
-        \?)
-            _error "Invalid options found: -${OPTARG}."
-            _error "${USAGE_HELP}" 2>&1
-            exit 1
+    \?)
+        _error "Invalid options found: -${OPTARG}."
+        _error "${USAGE_HELP}" 2>&1
+        exit 1
         ;;
     esac
 done
@@ -67,7 +67,7 @@ azure_login() {
     az account set --subscription "${ARM_SUBSCRIPTION_ID}"
 }
 
-lint_terraform(){
+lint_terraform() {
     terraform fmt -check
     if [ $? -ne 0 ]; then
         _error "Terraform files are not properly formatted!"
@@ -83,11 +83,11 @@ init_terrafrom_local() {
     terraform init -backend=false
 }
 
-validate_terraform(){
+validate_terraform() {
     terraform validate
 }
 
-preview_terraform(){
+preview_terraform() {
     if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
         terraform plan --detailed-exitcode -var="location=${LOCATION}" -var="resources_prefix=${RESOURCES_PREFIX}"
     elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
@@ -99,7 +99,7 @@ preview_terraform(){
     return $?
 }
 
-deploy_terraform(){
+deploy_terraform() {
     local _tfplan_exit_code=${1}
 
     if [ "${_tfplan_exit_code}" -eq 2 ]; then
@@ -114,7 +114,7 @@ deploy_terraform(){
     # rm -rf .terraform && rm -rf .terraform.lock.hcl && rm -rf terraform.tfstate && rm -rf terraform.tfstate.backup
 }
 
-destroy_terraform(){
+destroy_terraform() {
     if [ ${#RESOURCES_PREFIX} -gt 0 ]; then
         terraform destroy --auto-approve -var="location=${LOCATION}" -var="resources_prefix=${RESOURCES_PREFIX}"
     elif [[ ${#RESOURCES_PREFIX} -eq 0 && ${#UNIQUER} -gt 0 ]]; then
@@ -124,9 +124,9 @@ destroy_terraform(){
     fi
 }
 
-test_deploy(){
+test_deploy() {
     local _hostnames="${1}"
-    
+
     sleep 30
     pwsh -Command ./smokeTest.ps1 -HostNames "${_hostnames}"
 }
