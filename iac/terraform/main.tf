@@ -260,6 +260,44 @@ resource "azurerm_log_analytics_solution" "log_analytics_solution_containers" {
   }
 }
 
+resource "azurerm_log_analytics_solution" "log_analytics_solution_sqlassessment" {
+  solution_name         = "SQLAssessment"
+  location              = azurerm_resource_group.resource_group.location
+  resource_group_name   = azurerm_resource_group.resource_group.name
+  workspace_resource_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+  workspace_name        = azurerm_log_analytics_workspace.log_analytics_workspace.name
+
+  plan {
+    publisher = "Microsoft"
+    product   = "OMSGallery/SQLAssessment"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
+resource "azurerm_log_analytics_solution" "log_analytics_solution_azuresqlanalytics" {
+  solution_name         = "AzureSQLAnalytics"
+  location              = azurerm_resource_group.resource_group.location
+  resource_group_name   = azurerm_resource_group.resource_group.name
+  workspace_resource_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+  workspace_name        = azurerm_log_analytics_workspace.log_analytics_workspace.name
+
+  plan {
+    publisher = "Microsoft"
+    product   = "OMSGallery/AzureSQLAnalytics"
+  }
+
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+}
+
 ############################################
 ## CONTAINER GROUP - SIMULATOR            ##
 ############################################

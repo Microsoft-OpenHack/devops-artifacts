@@ -4,7 +4,7 @@ var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.sql/servers?tabs=bicep
-resource sqlServer 'Microsoft.Sql/servers@2021-02-01-preview' = {
+resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
   name: '${resourcesPrefix}sql'
   location: location
   properties: {
@@ -15,7 +15,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-02-01-preview' = {
   }
 }
 
-resource sqlFirewallRuleAzure 'Microsoft.Sql/servers/firewallRules@2021-02-01-preview' = {
+resource sqlFirewallRuleAzure 'Microsoft.Sql/servers/firewallRules@2021-05-01-preview' = {
   parent: sqlServer
   name: 'AzureAccess'
   properties: {
@@ -25,7 +25,7 @@ resource sqlFirewallRuleAzure 'Microsoft.Sql/servers/firewallRules@2021-02-01-pr
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.sql/servers/databases?tabs=bicep
-resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-02-01-preview' = {
+resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
   parent: sqlServer
   name: 'mydrivingDB'
   location: location

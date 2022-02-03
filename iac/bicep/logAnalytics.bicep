@@ -30,6 +30,40 @@ resource logAnalyticsSolutionContainers 'Microsoft.OperationsManagement/solution
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.operationsmanagement/solutions?tabs=bicep
+resource logAnalyticsSolutionSQLAssessment 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
+  name: 'SQLAssessment(${logAnalyticsWorkspace.name})'
+  location: location
+  
+  plan: {
+    name: 'SQLAssessment(${logAnalyticsWorkspace.name})'
+    product: 'OMSGallery/SQLAssessment'
+    publisher: 'Microsoft'
+    promotionCode: '' // this is ignored, but has to be present
+  }
+
+  properties: {
+    workspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.operationsmanagement/solutions?tabs=bicep
+resource logAnalyticsSolutionAzureSQLAnalytics 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
+  name: 'AzureSQLAnalytics(${logAnalyticsWorkspace.name})'
+  location: location
+  
+  plan: {
+    name: 'AzureSQLAnalytics(${logAnalyticsWorkspace.name})'
+    product: 'OMSGallery/AzureSQLAnalytics'
+    publisher: 'Microsoft'
+    promotionCode: '' // this is ignored, but has to be present
+  }
+
+  properties: {
+    workspaceResourceId: logAnalyticsWorkspace.id
+  }
+}
+
 // resource logAnalyticsSolutionContainerInsights 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
 //   name: 'ContainerInsights(${logAnalyticsWorkspace.name})'
 //   location: location
