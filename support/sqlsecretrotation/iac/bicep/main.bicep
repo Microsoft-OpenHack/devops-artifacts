@@ -5,7 +5,8 @@ param resourcesSuffix string = 'sqlsecrot'
 param secretName string = 'SQL-PASSWORD'
 param repoUrl string = 'https://github.com/Azure-Samples/KeyVault-Rotation-SQLPassword-Csharp.git'
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.storage/storageaccounts?tabs=bicep
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
   name: '${resourcesPrefix}${resourcesSuffix}st'
   location: resourceGroup().location
   sku: {
@@ -18,6 +19,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/serverfarms?tabs=bicep
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   name: '${resourcesPrefix}${resourcesSuffix}plan'
   location: resourceGroup().location
@@ -27,6 +29,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
 resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}${resourcesSuffix}func'
   location: resourceGroup().location
@@ -73,6 +76,7 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/sourcecontrols?tabs=bicep
 resource functionAppSourceControl 'Microsoft.Web/sites/sourcecontrols@2021-02-01' = {
   name: 'web'
   parent: functionApp
@@ -83,6 +87,7 @@ resource functionAppSourceControl 'Microsoft.Web/sites/sourcecontrols@2021-02-01
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/components?tabs=bicep
 resource applicationInsights 'microsoft.insights/components@2020-02-02' = {
   name: '${resourcesPrefix}${resourcesSuffix}appi'
   location: resourceGroup().location

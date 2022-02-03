@@ -5,10 +5,12 @@ param functionAppTenantId string
 param eventSubscriptionName string
 param secretName string
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/vaults?tabs=bicep
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
   name: keyVaultName
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/vaults/accesspolicies?tabs=bicep
 resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
   name: 'add'
   parent: keyVault
@@ -29,6 +31,7 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.eventgrid/eventsubscriptions?tabs=bicep
 resource keyVaultEventSubscription 'Microsoft.EventGrid/eventSubscriptions@2021-06-01-preview' = {
   name: eventSubscriptionName
   scope: keyVault

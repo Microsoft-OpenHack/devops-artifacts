@@ -10,8 +10,11 @@ param containerRegistryAdminUsername string
 param containerRegistryAdminPassword string
 param appServiceApiPoiHostname string
 param appServiceApiTripsHostname string
-param appServiceApiUserjavaHostname string
+param appServiceApiUserJavaHostname string
 param appServiceApiUserprofileHostname string
+param logAnalyticsWorkspaceId string
+@secure()
+param logAnalyticsWorkspaceKey string
 // param containerRegistryName string
 // param userAssignedManagedIdentityId string
 // param userAssignedManagedIdentityPrincipalId string
@@ -35,7 +38,7 @@ param appServiceApiUserprofileHostname string
 // }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.containerinstance/containergroups?tabs=bicep
-resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01' = {
+resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-09-01' = {
   name: '${resourcesPrefix}simulator'
   location: resourceGroup().location
   // identity: {
@@ -76,7 +79,7 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01'
             }
             {
               name: 'USER_JAVA_ROOT_URL'
-              value: 'https://${appServiceApiUserjavaHostname}'
+              value: 'https://${appServiceApiUserJavaHostname}'
             }
             {
               name: 'TRIPS_ROOT_URL'
@@ -121,6 +124,13 @@ resource containerGroup 'Microsoft.ContainerInstance/containerGroups@2021-03-01'
       type: 'Public'
     }
     osType: 'Linux'
+    diagnostics: {
+      logAnalytics: {
+        logType: 'ContainerInsights'
+        workspaceId: logAnalyticsWorkspaceId
+        workspaceKey: logAnalyticsWorkspaceKey
+      }
+    }
   }
   // dependsOn: [
   //   acrPullRoleAssignmentSimulator

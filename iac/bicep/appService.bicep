@@ -9,6 +9,14 @@ param containerRegistryName string
 param containerRegistryAdminUsername string
 param containerRegistryAdminPassword string
 param keyVaultName string // for Key Vault integration
+param appInsightsInstrumentationKey string
+param appInsightsConnectionString string
+param appInsightsStagingInstrumentationKey string
+param appInsightsStagingConnectionString string
+param apiPoiTag string
+param apiTripsTag string
+param apiUserJavaTag string
+param apiUserprofileTag string
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -27,7 +35,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' existing = {
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/serverfarms?tabs=bicep
-resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2021-02-01' = {
   name: '${resourcesPrefix}plan'
   kind: 'linux'
   location: location
@@ -41,7 +49,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2020-12-01' = {
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceTripviewer 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}tripviewer'
   location: location
   identity: {
@@ -63,7 +71,7 @@ resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'USER_JAVA_ROOT_URL'
-          value: 'https://${appServiceApiUserjava.properties.defaultHostName}'
+          value: 'https://${appServiceApiUserJava.properties.defaultHostName}'
         }
         {
           name: 'TRIPS_ROOT_URL'
@@ -79,7 +87,7 @@ resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
         }
         {
           name: 'STAGING_USER_JAVA_ROOT_URL'
-          value: 'https://${appServiceApiUserjavaStaging.properties.defaultHostName}'
+          value: 'https://${appServiceApiUserJavaStaging.properties.defaultHostName}'
         }
         {
           name: 'STAGING_TRIPS_ROOT_URL'
@@ -93,10 +101,33 @@ resource appServiceTripviewer 'Microsoft.Web/sites@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_URL'
           value: 'https://${containerRegistryLoginServer}'
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
       ]
       alwaysOn: true
     }
     httpsOnly: true
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceTripviewerExtension 'Microsoft.Web/sites/config@2021-02-01' = {
+  parent: appServiceTripviewer
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
   }
 }
 
@@ -111,7 +142,7 @@ resource acrPullRoleAssignmentTripviewer 'Microsoft.Authorization/roleAssignment
 }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceApiPoi 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}poi'
   location: location
   identity: {
@@ -120,7 +151,8 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiTag}'
+      healthCheckPath: '/api/healthcheck/poi'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -156,10 +188,33 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
           value: containerRegistryAdminPassword
           //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=DOCKER-REGISTRY-SERVER-PASSWORD)' // for Key Vault integration
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
       ]
       alwaysOn: true
     }
     httpsOnly: true
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiPoiExtension 'Microsoft.Web/sites/config@2021-02-01' = {
+  parent: appServiceApiPoi
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
   }
 }
 
@@ -185,7 +240,7 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2020-12-01' = {
 // }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/slots?tabs=bicep
-resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
+resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   parent: appServiceApiPoi
   name: 'staging'
   identity: {
@@ -195,7 +250,8 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiTag}'
+      healthCheckPath: '/api/healthcheck/poi'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -231,10 +287,33 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
           value: containerRegistryAdminPassword
           //value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=DOCKER-REGISTRY-SERVER-PASSWORD)' // for Key Vault integration
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsStagingInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsStagingConnectionString
+        }
       ]
       alwaysOn: true
     }
     httpsOnly: true
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiPoiStagingExtension 'Microsoft.Web/sites/slots/config@2021-02-01' = {
+  parent: appServiceApiPoiStaging
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
   }
 }
 
@@ -260,7 +339,7 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
 // }
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceApiTrips 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}trips'
   location: location
   identity: {
@@ -269,7 +348,8 @@ resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsTag}'
+      healthCheckPath: '/api/healthcheck/trips'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -299,6 +379,14 @@ resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -306,8 +394,23 @@ resource appServiceApiTrips 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiTripsExtension 'Microsoft.Web/sites/config@2021-02-01' = {
+  parent: appServiceApiTrips
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/slots?tabs=bicep
-resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
+resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   parent: appServiceApiTrips
   name: 'staging'
   identity: {
@@ -317,7 +420,8 @@ resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsTag}'
+      healthCheckPath: '/api/healthcheck/trips'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -347,6 +451,14 @@ resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsStagingInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsStagingConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -354,8 +466,23 @@ resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiTripsStagingExtension 'Microsoft.Web/sites/slots/config@2021-02-01' = {
+  parent: appServiceApiTripsStaging
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceApiUserJava 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}userjava'
   location: location
   identity: {
@@ -364,7 +491,8 @@ resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaTag}'
+      healthCheckPath: '/api/healthcheck/user-java'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -394,6 +522,14 @@ resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -401,9 +537,24 @@ resource appServiceApiUserjava 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiUserJavaExtension 'Microsoft.Web/sites/config@2021-02-01' = {
+  parent: appServiceApiUserJava
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/slots?tabs=bicep
-resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
-  parent: appServiceApiUserjava
+resource appServiceApiUserJavaStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
+  parent: appServiceApiUserJava
   name: 'staging'
   identity: {
     type: 'SystemAssigned'
@@ -412,7 +563,8 @@ resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaTag}'
+      healthCheckPath: '/api/healthcheck/user-java'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -442,6 +594,14 @@ resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsStagingInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsStagingConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -449,8 +609,24 @@ resource appServiceApiUserjavaStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
   }
 }
 
+
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiUserJavaStagingExtension 'Microsoft.Web/sites/slots/config@2021-02-01' = {
+  parent: appServiceApiUserJavaStaging
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep
-resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
+resource appServiceApiUserprofile 'Microsoft.Web/sites@2021-02-01' = {
   name: '${resourcesPrefix}userprofile'
   location: location
   identity: {
@@ -459,7 +635,8 @@ resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileTag}'
+      healthCheckPath: '/api/healthcheck/user'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -489,6 +666,14 @@ resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -496,8 +681,23 @@ resource appServiceApiUserprofile 'Microsoft.Web/sites@2020-12-01' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiUserprofileExtension 'Microsoft.Web/sites/config@2021-02-01' = {
+  parent: appServiceApiUserprofile
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/slots?tabs=bicep
-resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2020-12-01' = {
+resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   parent: appServiceApiUserprofile
   name: 'staging'
   identity: {
@@ -507,7 +707,8 @@ resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2020-12-01' 
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${varfile.baseImageTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileTag}'
+      healthCheckPath: '/api/healthcheck/user'
       appSettings: [
         {
           name: 'SQL_USER'
@@ -537,6 +738,14 @@ resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2020-12-01' 
           name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
           value: containerRegistryAdminPassword
         }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsightsStagingInstrumentationKey
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsStagingConnectionString
+        }
       ]
       alwaysOn: true
     }
@@ -544,7 +753,22 @@ resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2020-12-01' 
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-logs?tabs=bicep
+resource appServiceApiUserprofileStagingExtension 'Microsoft.Web/sites/slots/config@2021-02-01' = {
+  parent: appServiceApiUserprofileStaging
+  name: 'logs'
+  properties: {
+    httpLogs: {
+      fileSystem: {
+        retentionInMb: 50
+        retentionInDays: 7
+        enabled: true
+      }
+    }
+  }
+}
+
 output appServiceApiPoiHostname string = appServiceApiPoi.properties.defaultHostName
 output appServiceApiTripsHostname string = appServiceApiTrips.properties.defaultHostName
-output appServiceApiUserjavaHostname string = appServiceApiUserjava.properties.defaultHostName
+output appServiceApiUserJavaHostname string = appServiceApiUserJava.properties.defaultHostName
 output appServiceApiUserprofileHostname string = appServiceApiUserprofile.properties.defaultHostName

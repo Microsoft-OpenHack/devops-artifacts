@@ -6,7 +6,7 @@ output "appServiceApiTripsHealthcheck" {
   description = "Hostname of API-TRIPS"
   value       = "${azurerm_app_service.app_service_api-trips.default_site_hostname}/api/healthcheck/trips"
 }
-output "appServiceApiUserjavaHealthcheck" {
+output "appServiceApiUserJavaHealthcheck" {
   description = "Hostname of API-USER-JAVA"
   value       = "${azurerm_app_service.app_service_api-userjava.default_site_hostname}/api/healthcheck/user-java"
 }

@@ -92,6 +92,7 @@ resource "azurerm_function_app" "function_app" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_source_control
 # resource "azurerm_app_service_source_control" "app_service_source_control" {
 #   app_id   = azurerm_function_app.function_app.id
 #   repo_url = "https://github.com/Azure-Samples/KeyVault-Rotation-SQLPassword-Csharp.git"

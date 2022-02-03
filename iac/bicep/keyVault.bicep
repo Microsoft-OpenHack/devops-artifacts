@@ -8,6 +8,7 @@ param sqlServerAdminPassword string
 @secure()
 param containerRegistryAdminPassword string
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/vaults?tabs=bicep
 resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   name: '${resourcesPrefix}kv'
   location: location
@@ -24,6 +25,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2021-06-01-preview' = {
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/vaults/secrets?tabs=bicep
 resource sqlPassword 'Microsoft.KeyVault/vaults/secrets@2021-06-01-preview' = {
   parent: keyVault
   name: 'SQL-PASSWORD'
@@ -49,6 +51,5 @@ resource dockerRegistryServerPassword 'Microsoft.KeyVault/vaults/secrets@2021-06
     value: containerRegistryAdminPassword
   }
 }
-
 
 output name string = keyVault.name

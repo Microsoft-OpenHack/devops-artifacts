@@ -3,7 +3,7 @@ param resourcesPrefix string
 var location = resourceGroup().location
 
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.containerregistry/registries?tabs=bicep
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
   name: '${resourcesPrefix}cr'
   location: location
   sku: {
@@ -11,7 +11,6 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-pr
   }
   properties: {
     adminUserEnabled: true
-    anonymousPullEnabled: false
   }
 }
 

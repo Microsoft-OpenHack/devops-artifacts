@@ -1,6 +1,7 @@
 param resourcesPrefix string
 var location = resourceGroup().location
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.operationalinsights/workspaces?tabs=bicep
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: '${resourcesPrefix}log'
   location: location
@@ -12,6 +13,7 @@ resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06
   }
 }
 
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.operationsmanagement/solutions?tabs=bicep
 resource logAnalyticsSolutionContainers 'Microsoft.OperationsManagement/solutions@2015-11-01-preview' = {
   name: 'Containers(${logAnalyticsWorkspace.name})'
   location: location
@@ -43,3 +45,7 @@ resource logAnalyticsSolutionContainers 'Microsoft.OperationsManagement/solution
 //     workspaceResourceId: logAnalyticsWorkspace.id
 //   }
 // }
+
+
+output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.properties.customerId
+output logAnalyticsWorkspaceKey string = logAnalyticsWorkspace.listKeys().primarySharedKey
