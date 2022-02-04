@@ -80,6 +80,6 @@ resource logAnalyticsSolutionAzureSQLAnalytics 'Microsoft.OperationsManagement/s
 //   }
 // }
 
-
+output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.properties.customerId
 output logAnalyticsWorkspaceKey string = logAnalyticsWorkspace.listKeys().primarySharedKey

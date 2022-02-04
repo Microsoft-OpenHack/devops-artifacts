@@ -1,5 +1,5 @@
 param resourcesPrefix string
-param logAnalyticsWorkspaceId string
+param logAnalyticsWorkspaceName string
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -38,13 +38,17 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
   }
 }
 
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' existing = {
+  name: logAnalyticsWorkspaceName
+}
+
 // https://docs.microsoft.com/en-us/azure/azure-monitor/essentials/resource-manager-diagnostic-settings#diagnostic-setting-for-azure-sql-database
 // https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/diagnosticsettings?tabs=bicep
 resource sqlDatabaseDiagnostic 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
   name: 'sqlDbDiag'
   scope: sqlDatabase
   properties: {
-    workspaceId: logAnalyticsWorkspaceId
+    workspaceId: logAnalyticsWorkspace.id
     logs: [
       {
         category: 'SQLInsights'

@@ -122,8 +122,8 @@ validate_bicep
 preview_bicep
 deployment_output=$(deploy_bicep)
 echo "${deployment_output}"
-hostnames=$(echo "${deployment_output}" | jq -r -c '.properties.outputs | map(.value) | join(",")')
-test_deploy "${hostnames}"
+# hostnames=$(echo "${deployment_output}" | jq -r -c '.properties.outputs | map(.value) | join(",")')
+# test_deploy "${hostnames}"
 
 azure_logout
 
