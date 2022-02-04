@@ -83,6 +83,74 @@ resource "azurerm_mssql_database" "mssql_database" {
 }
 
 ############################################
+## SQL DATABASE DIAGNOSTIC                ##
+############################################
+
+resource "azurerm_monitor_diagnostic_setting" "monitor_diagnostic_setting_mssql_database" {
+  name                       = "sqlDbDiag"
+  target_resource_id         = azurerm_mssql_database.mssql_database.id
+  log_analytics_workspace_id = azurerm_log_analytics_workspace.log_analytics_workspace.id
+
+  log {
+    category = "SQLInsights"
+    enabled  = true
+  }
+  log {
+    category = "AutomaticTuning"
+    enabled  = true
+  }
+  log {
+    category = "QueryStoreRuntimeStatistics"
+    enabled  = true
+  }
+  log {
+    category = "QueryStoreWaitStatistics"
+    enabled  = true
+  }
+  log {
+    category = "Errors"
+    enabled  = true
+  }
+  log {
+    category = "DatabaseWaitStatistics"
+    enabled  = true
+  }
+  log {
+    category = "Timeouts"
+    enabled  = true
+  }
+  log {
+    category = "Blocks"
+    enabled  = true
+  }
+  log {
+    category = "Deadlocks"
+    enabled  = true
+  }
+  log {
+    category = "DevOpsOperationsAudit"
+    enabled  = true
+  }
+  log {
+    category = "SQLSecurityAuditEvents"
+    enabled  = true
+  }
+
+  metric {
+    category = "Basic"
+    enabled  = true
+  }
+  metric {
+    category = "InstanceAndAppAdvanced"
+    enabled  = true
+  }
+  metric {
+    category = "WorkloadManagement"
+    enabled  = true
+  }
+}
+
+############################################
 ## APP SERVICE PLAN                       ##
 ############################################
 

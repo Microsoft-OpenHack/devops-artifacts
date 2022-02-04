@@ -82,6 +82,14 @@ resource sqlDatabaseDiagnostic 'microsoft.insights/diagnosticSettings@2021-05-01
         category: 'Deadlocks'
         enabled: true
       }
+      {
+        category: 'DevOpsOperationsAudit'
+        enabled: true
+      }
+      {
+        category: 'SQLSecurityAuditEvents'
+        enabled: true
+      }
     ]
     metrics: [
       {
