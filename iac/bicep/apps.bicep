@@ -87,7 +87,8 @@ resource dataInit 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   ]
 }
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = {
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.containerregistry/registries?tabs=bicep
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
   name: containerRegistryName
 }
 

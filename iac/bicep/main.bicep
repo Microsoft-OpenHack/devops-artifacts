@@ -52,11 +52,13 @@ module sqlServer './sqlServer.bicep' = {
   name: 'sqlServerDeployment'
   params: {
     resourcesPrefix: resourcesPrefixCalculated
+    logAnalyticsWorkspaceId: logAnalytics.outputs.logAnalyticsWorkspaceId
   }
   scope: resourceGroup(resourceGroupName)
   dependsOn: [
     openhackResourceGroup
     managedIdentity
+    logAnalytics
   ]
 }
 

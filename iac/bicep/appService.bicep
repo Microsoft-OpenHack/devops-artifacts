@@ -25,7 +25,7 @@ var varfile = json(loadTextContent('./variables.json'))
 // AcrPull
 var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
 
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-06-01-preview' existing = {
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
   name: containerRegistryName
 }
 

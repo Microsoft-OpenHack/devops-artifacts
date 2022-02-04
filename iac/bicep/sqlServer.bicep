@@ -1,4 +1,5 @@
 param resourcesPrefix string
+param logAnalyticsWorkspaceId string
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -34,6 +35,68 @@ resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-05-01-preview' = {
   }
   properties: {
     collation: 'SQL_Latin1_General_CP1_CI_AS'
+  }
+}
+
+// https://docs.microsoft.com/en-us/azure/azure-monitor/essentials/resource-manager-diagnostic-settings#diagnostic-setting-for-azure-sql-database
+// https://docs.microsoft.com/en-us/azure/templates/microsoft.insights/diagnosticsettings?tabs=bicep
+resource sqlDatabaseDiagnostic 'microsoft.insights/diagnosticSettings@2021-05-01-preview' = {
+  name: 'sqlDbDiag'
+  scope: sqlDatabase
+  properties: {
+    workspaceId: logAnalyticsWorkspaceId
+    logs: [
+      {
+        category: 'SQLInsights'
+        enabled: true
+      }
+      {
+        category: 'AutomaticTuning'
+        enabled: true
+      }
+      {
+        category: 'QueryStoreRuntimeStatistics'
+        enabled: true
+      }
+      {
+        category: 'QueryStoreWaitStatistics'
+        enabled: true
+      }
+      {
+        category: 'Errors'
+        enabled: true
+      }
+      {
+        category: 'DatabaseWaitStatistics'
+        enabled: true
+      }
+      {
+        category: 'Timeouts'
+        enabled: true
+      }
+      {
+        category: 'Blocks'
+        enabled: true
+      }
+      {
+        category: 'Deadlocks'
+        enabled: true
+      }
+    ]
+    metrics: [
+      {
+        category: 'Basic'
+        enabled: true
+      }
+      {
+        category: 'InstanceAndAppAdvanced'
+        enabled: true
+      }
+      {
+        category: 'WorkloadManagement'
+        enabled: true
+      }
+    ]
   }
 }
 
