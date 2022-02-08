@@ -13,10 +13,10 @@ param appInsightsInstrumentationKey string
 param appInsightsConnectionString string
 param appInsightsStagingInstrumentationKey string
 param appInsightsStagingConnectionString string
-param apiPoiTag string
-param apiTripsTag string
-param apiUserJavaTag string
-param apiUserprofileTag string
+param apiPoiBaseImageTag string
+param apiTripsBaseImageTag string
+param apiUserJavaBaseImageTag string
+param apiUserprofileBaseImageTag string
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -151,7 +151,7 @@ resource appServiceApiPoi 'Microsoft.Web/sites@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiBaseImageTag}'
       healthCheckPath: '/api/healthcheck/poi'
       appSettings: [
         {
@@ -250,7 +250,7 @@ resource appServiceApiPoiStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-poi:${apiPoiBaseImageTag}'
       healthCheckPath: '/api/healthcheck/poi'
       appSettings: [
         {
@@ -348,7 +348,7 @@ resource appServiceApiTrips 'Microsoft.Web/sites@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsBaseImageTag}'
       healthCheckPath: '/api/healthcheck/trips'
       appSettings: [
         {
@@ -420,7 +420,7 @@ resource appServiceApiTripsStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-trips:${apiTripsBaseImageTag}'
       healthCheckPath: '/api/healthcheck/trips'
       appSettings: [
         {
@@ -491,7 +491,7 @@ resource appServiceApiUserJava 'Microsoft.Web/sites@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaBaseImageTag}'
       healthCheckPath: '/api/healthcheck/user-java'
       appSettings: [
         {
@@ -563,7 +563,7 @@ resource appServiceApiUserJavaStaging 'Microsoft.Web/sites/slots@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-user-java:${apiUserJavaBaseImageTag}'
       healthCheckPath: '/api/healthcheck/user-java'
       appSettings: [
         {
@@ -635,7 +635,7 @@ resource appServiceApiUserprofile 'Microsoft.Web/sites@2021-02-01' = {
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileBaseImageTag}'
       healthCheckPath: '/api/healthcheck/user'
       appSettings: [
         {
@@ -707,7 +707,7 @@ resource appServiceApiUserprofileStaging 'Microsoft.Web/sites/slots@2021-02-01' 
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
-      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileTag}'
+      linuxFxVersion: 'DOCKER|${containerRegistryLoginServer}/devopsoh/api-userprofile:${apiUserprofileBaseImageTag}'
       healthCheckPath: '/api/healthcheck/user'
       appSettings: [
         {

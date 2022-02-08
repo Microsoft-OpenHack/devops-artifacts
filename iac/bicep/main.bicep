@@ -3,19 +3,22 @@ targetScope = 'subscription'
 param uniquer string = uniqueString(newGuid())
 param location string = deployment().location
 param resourcesPrefix string = ''
-param apiPoiTag string = ''
-param apiTripsTag string = ''
-param apiUserJavaTag string = ''
-param apiUserprofileTag string = ''
+param apiPoiBaseImageTag string = ''
+param apiTripsBaseImageTag string = ''
+param apiUserJavaBaseImageTag string = ''
+param apiUserprofileBaseImageTag string = ''
+param sqlServerAdminPassword string = ''
 
 var varfile = json(loadTextContent('./variables.json'))
 var resourcesPrefixCalculated = empty(resourcesPrefix) ? '${varfile.namePrefix}${uniquer}' : resourcesPrefix
 var resourceGroupName = '${resourcesPrefixCalculated}rg'
 
-var apiPoiTagCalculated = empty(apiPoiTag) ? varfile.baseImageTag : apiPoiTag
-var apiTripsTagCalculated = empty(apiTripsTag) ? varfile.baseImageTag : apiTripsTag
-var apiUserJavaTagCalculated = empty(apiUserJavaTag) ? varfile.baseImageTag : apiUserJavaTag
-var apiUserprofileTagCalculated = empty(apiUserprofileTag) ? varfile.baseImageTag : apiUserprofileTag
+var apiPoiBaseImageTagCalculated = empty(apiPoiBaseImageTag) ? varfile.baseImageTag : apiPoiBaseImageTag
+var apiTripsBaseImageTagCalculated = empty(apiTripsBaseImageTag) ? varfile.baseImageTag : apiTripsBaseImageTag
+var apiUserJavaBaseImageTagCalculated = empty(apiUserJavaBaseImageTag) ? varfile.baseImageTag : apiUserJavaBaseImageTag
+var apiUserprofileBaseImageTagCalculated = empty(apiUserprofileBaseImageTag) ? varfile.baseImageTag : apiUserprofileBaseImageTag
+
+var sqlServerAdminPasswordCalculated = empty(sqlServerAdminPassword) ? varfile.sqlServerAdminPassword : sqlServerAdminPassword
 
 module openhackResourceGroup './resourceGroup.bicep' = {
   name: '${resourcesPrefixCalculated}-resourceGroupDeployment'
@@ -52,6 +55,7 @@ module sqlServer './sqlServer.bicep' = {
   name: 'sqlServerDeployment'
   params: {
     resourcesPrefix: resourcesPrefixCalculated
+    sqlServerAdminPassword: sqlServerAdminPasswordCalculated
     logAnalyticsWorkspaceName: logAnalytics.outputs.logAnalyticsWorkspaceName
   }
   scope: resourceGroup(resourceGroupName)
@@ -79,7 +83,7 @@ module appService './appService.bicep' = {
     resourcesPrefix: resourcesPrefixCalculated
     sqlServerFqdn: sqlServer.outputs.sqlServerFqdn
     sqlServerAdminLogin: sqlServer.outputs.sqlServerAdminLogin
-    sqlServerAdminPassword: sqlServer.outputs.sqlServerAdminPassword
+    sqlServerAdminPassword: sqlServerAdminPasswordCalculated
     sqlDatabaseName: sqlServer.outputs.sqlDatabaseName
     containerRegistryLoginServer: containerRegistry.outputs.containerRegistryLoginServer
     containerRegistryName: containerRegistry.outputs.containerRegistryName
@@ -92,10 +96,10 @@ module appService './appService.bicep' = {
     appInsightsConnectionString: appInsights.outputs.appInsightsConnectionString
     appInsightsStagingInstrumentationKey: appInsights.outputs.appInsightsStagingInstrumentationKey
     appInsightsStagingConnectionString: appInsights.outputs.appInsightsStagingConnectionString
-    apiPoiTag: apiPoiTagCalculated
-    apiTripsTag: apiTripsTagCalculated
-    apiUserJavaTag: apiUserJavaTagCalculated
-    apiUserprofileTag: apiUserprofileTagCalculated
+    apiPoiBaseImageTag: apiPoiBaseImageTagCalculated
+    apiTripsBaseImageTag: apiTripsBaseImageTagCalculated
+    apiUserJavaBaseImageTag: apiUserJavaBaseImageTagCalculated
+    apiUserprofileBaseImageTag: apiUserprofileBaseImageTagCalculated
   }
   scope: resourceGroup(resourceGroupName)
   dependsOn: [
@@ -112,6 +116,7 @@ module apps './apps.bicep' = {
     resourcesPrefix: resourcesPrefixCalculated
     sqlServerFqdn: sqlServer.outputs.sqlServerFqdn
     sqlServerName: sqlServer.outputs.sqlServerName
+    sqlServerAdminPassword: sqlServerAdminPasswordCalculated
     containerRegistryLoginServer: containerRegistry.outputs.containerRegistryLoginServer
     containerRegistryName: containerRegistry.outputs.containerRegistryName
     userAssignedManagedIdentityId: managedIdentity.outputs.userAssignedManagedIdentityId
@@ -142,7 +147,7 @@ module containerGroup './containerGroup.bicep' = {
     resourcesPrefix: resourcesPrefixCalculated
     sqlServerFqdn: sqlServer.outputs.sqlServerFqdn
     sqlServerAdminLogin: sqlServer.outputs.sqlServerAdminLogin
-    sqlServerAdminPassword: sqlServer.outputs.sqlServerAdminPassword
+    sqlServerAdminPassword: sqlServerAdminPasswordCalculated
     sqlDatabaseName: sqlServer.outputs.sqlDatabaseName
     containerRegistryLoginServer: containerRegistry.outputs.containerRegistryLoginServer
     // containerRegistryName: containerRegistry.outputs.containerRegistryName
@@ -173,7 +178,7 @@ module keyVault './keyVault.bicep' = {
     resourcesPrefix: resourcesPrefixCalculated
     containerRegistryAdminPassword: containerRegistry.outputs.containerRegistryAdminPassword
     sqlServerAdminLogin: sqlServer.outputs.sqlServerAdminLogin
-    sqlServerAdminPassword: sqlServer.outputs.sqlServerAdminPassword
+    sqlServerAdminPassword: sqlServerAdminPasswordCalculated
     sqlServerId: sqlServer.outputs.sqlServerId
   }
   scope: resourceGroup(resourceGroupName)

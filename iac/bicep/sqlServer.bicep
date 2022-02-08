@@ -1,5 +1,6 @@
 param resourcesPrefix string
 param logAnalyticsWorkspaceName string
+param sqlServerAdminPassword string
 
 var location = resourceGroup().location
 var varfile = json(loadTextContent('./variables.json'))
@@ -10,7 +11,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-05-01-preview' = {
   location: location
   properties: {
     administratorLogin: varfile.sqlServerAdminLogin
-    administratorLoginPassword: varfile.sqlServerAdminPassword
+    administratorLoginPassword: sqlServerAdminPassword
     minimalTlsVersion: '1.2'
     version: '12.0'
   }
@@ -113,7 +114,6 @@ resource sqlDatabaseDiagnostic 'microsoft.insights/diagnosticSettings@2021-05-01
 }
 
 output sqlServerAdminLogin string = varfile.sqlServerAdminLogin
-output sqlServerAdminPassword string = varfile.sqlServerAdminPassword
 output sqlServerFqdn string = sqlServer.properties.fullyQualifiedDomainName
 output sqlDatabaseName string = sqlDatabase.name
 output sqlServerName string = sqlServer.name

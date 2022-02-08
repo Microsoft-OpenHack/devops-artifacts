@@ -35,7 +35,10 @@ locals {
   user_assigned_identity_name               = "${local.resources_prefix}uami"
   container_group_simulator_name            = "${local.resources_prefix}simulator"
   log_analytics_name                        = "${local.resources_prefix}log"
-  base_image_tag                            = local._default.base_image_tag
+  apipoi_base_image_tag                     = var.apipoi_base_image_tag != null ? var.apipoi_base_image_tag : local._default.base_image_tag
+  apitrips_base_image_tag                   = var.apitrips_base_image_tag != null ? var.apitrips_base_image_tag : local._default.base_image_tag
+  apiuserjava_base_image_tag                = var.apiuserjava_base_image_tag != null ? var.apiuserjava_base_image_tag : local._default.base_image_tag
+  apiuserprofile_base_image_tag             = var.apiuserprofile_base_image_tag != null ? var.apiuserprofile_base_image_tag : local._default.base_image_tag
   docker_registry_server_url                = var.docker_registry_server_url != null ? var.docker_registry_server_url : "https://${azurerm_container_registry.container_registry.login_server}"
   docker_registry_server_username           = var.docker_registry_server_username != null ? var.docker_registry_server_username : azurerm_container_registry.container_registry.admin_username
   docker_registry_server_password           = var.docker_registry_server_password != null ? var.docker_registry_server_password : azurerm_container_registry.container_registry.admin_password

@@ -35,7 +35,7 @@ resource "azurerm_app_service" "app_service_api-trips" {
     ftps_state        = "Disabled"
     health_check_path = "/api/healthcheck/trips"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-trips:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-trips:${local.apitrips_base_image_tag}"
   }
 
   logs {
@@ -102,7 +102,7 @@ resource "azurerm_app_service_slot" "app_service_api-trips_staging" {
     ftps_state        = "Disabled"
     health_check_path = "/api/healthcheck/trips"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-trips:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-trips:${local.apitrips_base_image_tag}"
   }
 
   logs {

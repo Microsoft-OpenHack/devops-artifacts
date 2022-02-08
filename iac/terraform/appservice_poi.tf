@@ -37,7 +37,7 @@ resource "azurerm_app_service" "app_service_api-poi" {
     ftps_state        = "Disabled"
     health_check_path = "/api/healthcheck/poi"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-poi:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-poi:${local.apipoi_base_image_tag}"
   }
 
   logs {
@@ -105,7 +105,7 @@ resource "azurerm_app_service_slot" "app_service_api-poi_staging" {
     ftps_state        = "Disabled"
     health_check_path = "/api/healthcheck/poi"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-poi:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-poi:${local.apipoi_base_image_tag}"
   }
 
   logs {

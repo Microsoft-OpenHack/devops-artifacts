@@ -35,7 +35,7 @@ resource "azurerm_app_service" "app_service_api-userjava" {
     ftps_state        = "Disabled"
     health_check_path = "/api/healthcheck/user-java"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-user-java:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-user-java:${local.apiuserjava_base_image_tag}"
   }
 
   logs {
@@ -102,7 +102,7 @@ resource "azurerm_app_service_slot" "app_service_api-userjava_staging" {
     health_check_path = "/api/healthcheck/user-java"
     ftps_state        = "Disabled"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-user-java:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-user-java:${local.apiuserjava_base_image_tag}"
   }
 
   logs {

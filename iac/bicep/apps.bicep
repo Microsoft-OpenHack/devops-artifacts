@@ -1,6 +1,7 @@
 param resourcesPrefix string
 param sqlServerFqdn string
 param sqlServerName string
+param sqlServerAdminPassword string
 param containerRegistryLoginServer string
 param containerRegistryName string
 param userAssignedManagedIdentityId string
@@ -60,7 +61,7 @@ resource dataInit 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
       }
       {
         name: 'SQL_ADMIN_PASSWORD'
-        secureValue: varfile.sqlServerAdminPassword
+        secureValue: sqlServerAdminPassword
       }
       {
         name: 'SQL_DB_NAME'

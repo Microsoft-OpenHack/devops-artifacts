@@ -2,11 +2,13 @@ variable "location" {
   description = ""
   type        = string
 }
+
 variable "uniquer" {
   description = ""
   type        = string
   default     = null
 }
+
 variable "resources_prefix" {
   description = ""
   type        = string
@@ -43,4 +45,28 @@ variable "mssql_server_administrator_login_password" {
   type        = string
   default     = null
   sensitive   = true
+}
+
+variable "apipoi_base_image_tag" {
+  description = ""
+  type        = string
+  default     = null
+}
+
+variable "apitrips_base_image_tag" {
+  description = ""
+  type        = string
+  default     = null
+}
+
+variable "apiuserjava_base_image_tag" {
+  description = ""
+  type        = string
+  default     = null
+}
+
+variable "apiuserprofile_base_image_tag" {
+  description = ""
+  type        = string
+  default     = null
 }

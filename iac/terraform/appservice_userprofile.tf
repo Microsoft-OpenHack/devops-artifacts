@@ -35,7 +35,7 @@ resource "azurerm_app_service" "app_service_api-userprofile" {
     health_check_path = "/api/healthcheck/user"
     ftps_state        = "Disabled"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-userprofile:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-userprofile:${local.apiuserprofile_base_image_tag}"
   }
 
   logs {
@@ -102,7 +102,7 @@ resource "azurerm_app_service_slot" "app_service_api-userprofile_staging" {
     health_check_path = "/api/healthcheck/user"
     ftps_state        = "Disabled"
     # acr_use_managed_identity_credentials = true
-    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-userprofile:${local.base_image_tag}"
+    linux_fx_version = "DOCKER|${azurerm_container_registry.container_registry.login_server}/devopsoh/api-userprofile:${local.apiuserprofile_base_image_tag}"
   }
 
   logs {
