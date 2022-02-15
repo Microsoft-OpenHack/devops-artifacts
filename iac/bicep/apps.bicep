@@ -40,7 +40,7 @@ resource dataInit 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     }
   }
   properties: {
-    azCliVersion: '2.32.0'
+    azCliVersion: '2.33.1'
     cleanupPreference: 'Always'
     containerSettings: {
       containerGroupName: '${resourcesPrefix}datainit'
@@ -115,7 +115,7 @@ resource dockerBuild 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
     }
   }
   properties: {
-    azCliVersion: '2.32.0'
+    azCliVersion: '2.33.1'
     cleanupPreference: 'Always'
     containerSettings: {
       containerGroupName: '${resourcesPrefix}dockerdbuild'
